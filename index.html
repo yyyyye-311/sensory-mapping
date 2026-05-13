@@ -238,6 +238,15 @@ h1 {
   .btn { padding: 0.7rem 1.8rem; font-size: 0.9rem; }
   .result-card { padding: 2rem 1.5rem; }
 }
+
+.submit-hint {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  color: #a89b8e;
+  opacity: 0;
+  transition: opacity 0.5s;
+}
 </style>
 </head>
 <body>
@@ -324,6 +333,7 @@ h1 {
     <div class="result-card">
       <button class="mute-btn" id="muteBtn" onclick="toggleMute()" title="静音/取消静音">🔊</button>
       <div class="poem" id="poemOutput"></div>
+      <span class="submit-hint" id="submitHint"></span>
     </div>
   </div>
 </div>
@@ -387,6 +397,38 @@ function parseBpm(input) {
   return { category: cat, tempoWord: trimmed + "的" };
 }
 
+
+// Submit data to backend (fire and forget)
+function submitToBackend(answers, scent, weather, bpm, poemText, extra, tempoWord, musicType) {
+  const payload = {
+    q1: answers[1],
+    q2: answers[2],
+    q3: answers[3],
+    q4: answers[4],
+    q5: answers[5],
+    scent: scent || '',
+    weather: weather || '',
+    bpm: bpm || '',
+    generated_poem: poemText,
+    generated_extra: extra,
+    tempo_word: tempoWord,
+    music_type: musicType
+  };
+  fetch('https://h5-questionnaire-production.up.railway.app/api/sensory/submit', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      const hint = document.getElementById('submitHint');
+      if (hint) { hint.textContent = '已记录 ✓'; hint.style.opacity = '1'; }
+    }
+  })
+  .catch(() => {});
+}
+
 function generate() {
   const answers = getAnswers();
   if (!answers) {
@@ -435,6 +477,11 @@ ${pick(extraLines)}`;
 
   // Play audio
   playAudio(category);
+
+  // Submit to backend
+  const extraLine = poem.split('
+').filter(l => l.trim()).pop();
+  submitToBackend(answers, scent, weather, bpmInput, poem, extraLine, tempoWord, category);
 }
 
 function playAudio(category) {
@@ -472,6 +519,10 @@ function resetAll() {
 
   // Reset form
   document.getElementById('surveyForm').reset();
+
+  // Clear submit hint
+  const hint = document.getElementById('submitHint');
+  if (hint) { hint.textContent = ''; hint.style.opacity = '0'; }
 
   // Scroll to top
   window.scrollTo({ top: 0, behavior: 'smooth' });
