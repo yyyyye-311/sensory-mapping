@@ -479,8 +479,7 @@ ${pick(extraLines)}`;
   playAudio(category);
 
   // Submit to backend
-  const extraLine = poem.split('
-').filter(l => l.trim()).pop();
+  const extraLine = poem.split('\n').filter(l => l.trim()).pop();
   submitToBackend(answers, scent, weather, bpmInput, poem, extraLine, tempoWord, category);
 }
 
@@ -530,3 +529,4 @@ function resetAll() {
 </script>
 </body>
 </html>
+
