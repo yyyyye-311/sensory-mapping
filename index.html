@@ -1,614 +1,481 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>感官测绘 · 存在痕迹生成器</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>感官测绘 · 存在痕迹生成器</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
-        body {
-            background: #f7f5f0;
-            font-family: "Noto Serif SC", "Source Han Serif SC", "Songti SC", "宋体", Georgia, serif;
-            color: #3e3a39;
-            line-height: 1.8;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 1.5rem;
-            background-image: radial-gradient(circle at 20% 30%, rgba(180, 170, 160, 0.08) 0%, transparent 40%),
-                radial-gradient(circle at 80% 70%, rgba(140, 130, 120, 0.06) 0%, transparent 40%);
-        }
+body {
+  font-family: 'Georgia', 'Noto Serif SC', serif;
+  background: linear-gradient(135deg, #f5f0e8 0%, #e8e0d4 50%, #d4ccc0 100%);
+  min-height: 100vh;
+  padding: 2rem 1rem;
+  color: #3a3530;
+  line-height: 1.8;
+}
 
-        .container {
-            max-width: 680px;
-            width: 100%;
-            background: rgba(255, 255, 255, 0.75);
-            backdrop-filter: blur(18px);
-            -webkit-backdrop-filter: blur(18px);
-            border-radius: 2.5rem;
-            padding: 2.8rem 2.2rem;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08),
-                0 0 0 1px rgba(200, 190, 180, 0.3);
-            transition: all 0.3s ease;
-        }
+.container {
+  max-width: 680px;
+  margin: 0 auto;
+}
 
-        h1 {
-            font-size: 2rem;
-            font-weight: 400;
-            letter-spacing: 0.05em;
-            color: #4a3f38;
-            margin-bottom: 0.25rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        h1 span {
-            font-size: 1.2rem;
-            background: #e8e0d5;
-            padding: 0.15rem 0.8rem;
-            border-radius: 2rem;
-            color: #5e5247;
-            font-weight: 300;
-            letter-spacing: 0;
-        }
-        .subtitle {
-            font-size: 0.95rem;
-            color: #8c8279;
-            margin-bottom: 2.2rem;
-            border-left: 3px solid #d9cec1;
-            padding-left: 1rem;
-            font-style: italic;
-        }
+h1 {
+  text-align: center;
+  font-size: 1.8rem;
+  font-weight: 400;
+  letter-spacing: 0.15em;
+  margin-bottom: 0.5rem;
+  color: #2a2520;
+}
 
-        .question-block {
-            margin-bottom: 2rem;
-            background: #faf9f7;
-            border-radius: 1.5rem;
-            padding: 1.5rem 1.5rem 1.2rem;
-            border: 1px solid #e6dfd6;
-            transition: all 0.2s;
-        }
-        .question-block:hover {
-            border-color: #c8bcae;
-            background: #fdfcfb;
-        }
-        .q-title {
-            font-weight: 500;
-            font-size: 1.1rem;
-            margin-bottom: 0.9rem;
-            color: #4b3f34;
-            display: flex;
-            align-items: baseline;
-            gap: 0.4rem;
-        }
-        .q-num {
-            font-size: 0.8rem;
-            background: #e1d7cb;
-            color: #5b4e42;
-            padding: 0.15rem 0.5rem;
-            border-radius: 1rem;
-            font-weight: 400;
-        }
-        .options {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem 1rem;
-            margin-bottom: 0.3rem;
-        }
-        .option-item {
-            display: flex;
-            align-items: center;
-            gap: 0.35rem;
-            cursor: pointer;
-            padding: 0.25rem 0.5rem;
-            border-radius: 2rem;
-            transition: background 0.15s;
-        }
-        .option-item:hover {
-            background: #f0ebe2;
-        }
-        .option-item input[type="radio"] {
-            appearance: none;
-            -webkit-appearance: none;
-            width: 1rem;
-            height: 1rem;
-            border: 2px solid #c2b6a7;
-            border-radius: 50%;
-            margin: 0;
-            transition: 0.15s;
-            cursor: pointer;
-            position: relative;
-        }
-        .option-item input[type="radio"]:checked {
-            border-color: #8b7a65;
-            background: #8b7a65;
-            box-shadow: inset 0 0 0 3px #faf9f7;
-        }
-        .option-item label {
-            cursor: pointer;
-            font-size: 0.95rem;
-            color: #4e4237;
-        }
+.subtitle {
+  text-align: center;
+  font-size: 0.9rem;
+  color: #7a7068;
+  margin-bottom: 2.5rem;
+  letter-spacing: 0.1em;
+}
 
-        .refrain {
-            margin-top: 0.8rem;
-            display: flex;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            padding-left: 0.3rem;
-            font-size: 0.9rem;
-            color: #7b6e62;
-        }
-        .refrain input {
-            border: none;
-            border-bottom: 1.5px dashed #c9bdb0;
-            background: transparent;
-            padding: 0.2rem 0.4rem;
-            font-family: inherit;
-            font-size: 0.9rem;
-            color: #5b4b3e;
-            width: 140px;
-            transition: border-color 0.2s;
-            outline: none;
-        }
-        .refrain input:focus {
-            border-bottom-color: #9b8a78;
-        }
-        .refrain input::placeholder {
-            color: #c2b5a8;
-            font-style: italic;
-            font-size: 0.8rem;
-        }
+.card {
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 16px;
+  padding: 2rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 8px 32px rgba(80, 60, 40, 0.08);
+  transition: transform 0.3s ease;
+}
 
-        .generate-btn {
-            background: #5e4e3e;
-            border: none;
-            color: #faf7f2;
-            font-family: inherit;
-            font-size: 1.1rem;
-            padding: 0.9rem 2.5rem;
-            border-radius: 3rem;
-            cursor: pointer;
-            transition: all 0.25s;
-            letter-spacing: 0.08em;
-            margin: 1.5rem 0 1rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            box-shadow: 0 6px 14px rgba(80, 60, 40, 0.12);
-        }
-        .generate-btn:hover {
-            background: #4b3c2e;
-            box-shadow: 0 10px 20px rgba(80, 60, 40, 0.2);
-            transform: translateY(-1px);
-        }
-        .generate-btn:active {
-            transform: translateY(1px);
-            box-shadow: 0 3px 8px rgba(80, 60, 40, 0.12);
-        }
+.card:hover {
+  transform: translateY(-2px);
+}
 
-        .result-area {
-            margin-top: 2rem;
-            padding: 1.8rem 1.8rem 1.5rem;
-            background: #fffbf5;
-            border-radius: 1.8rem;
-            border: 1px solid #e3d8cb;
-            transition: opacity 0.4s ease, transform 0.4s ease;
-            opacity: 0;
-            transform: translateY(15px);
-            display: none;
-            text-align: center;
-        }
-        .result-area.show {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        .poem-line {
-            font-size: 1.4rem;
-            font-weight: 400;
-            color: #4c3b2c;
-            letter-spacing: 0.04em;
-            line-height: 1.9;
-        }
-        .poem-line .tempo {
-            display: block;
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 0.15em;
-            color: #b7a797;
-            margin-bottom: 0.3rem;
-        }
-        .poem-line strong {
-            font-weight: 550;
-            color: #5e4330;
-        }
-        .extra-line {
-            margin-top: 1.2rem;
-            font-size: 0.9rem;
-            color: #8e8276;
-            font-style: italic;
-            border-top: 1px dashed #d9cdbd;
-            padding-top: 1rem;
-        }
+.question-label {
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  color: #4a4038;
+  font-weight: 500;
+}
 
-        .reset-link {
-            display: inline-block;
-            margin-top: 1.2rem;
-            font-size: 0.85rem;
-            color: #9c8c7b;
-            cursor: pointer;
-            text-decoration: underline;
-            text-underline-offset: 3px;
-            transition: color 0.2s;
-        }
-        .reset-link:hover {
-            color: #5e4b37;
-        }
+.options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-bottom: 1rem;
+}
 
-        .audio-control {
-            display: inline-block;
-            margin-left: 1.5rem;
-            font-size: 1.2rem;
-            cursor: pointer;
-            transition: opacity 0.2s;
-            vertical-align: middle;
-        }
-        .audio-control:hover {
-            opacity: 0.7;
-        }
-        .audio-hint {
-            display: block;
-            margin-top: 0.5rem;
-            font-size: 0.75rem;
-            color: #b7a797;
-            letter-spacing: 0.05em;
-        }
+.options label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 1rem;
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(180, 160, 140, 0.3);
+  border-radius: 24px;
+  cursor: pointer;
+  font-size: 0.88rem;
+  transition: all 0.25s ease;
+}
 
-        .warning {
-            color: #b45f4c;
-            font-size: 0.8rem;
-            margin-top: 0.4rem;
-            display: none;
-        }
+.options label:hover {
+  background: rgba(255, 255, 255, 0.8);
+  border-color: rgba(140, 120, 100, 0.5);
+}
 
-        @media (max-width: 500px) {
-            .container {
-                padding: 2rem 1.3rem;
-            }
-            .options {
-                flex-direction: column;
-                gap: 0.2rem;
-            }
-            .refrain {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-        }
-    </style>
+.options input[type="radio"] {
+  accent-color: #8a7060;
+  width: 14px;
+  height: 14px;
+}
+
+.options input[type="radio"]:checked + span {
+  color: #5a4030;
+  font-weight: 600;
+}
+
+.refrain {
+  margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.refrain-label {
+  font-size: 0.85rem;
+  color: #7a6a5a;
+  white-space: nowrap;
+}
+
+.refrain input[type="text"] {
+  flex: 1;
+  border: none;
+  border-bottom: 1px solid rgba(140, 120, 100, 0.4);
+  background: transparent;
+  font-family: inherit;
+  font-size: 0.9rem;
+  padding: 0.4rem 0;
+  color: #3a3530;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.refrain input[type="text"]:focus {
+  border-bottom-color: #8a7060;
+}
+
+.refrain input[type="text"]::placeholder {
+  color: #b0a090;
+  font-style: italic;
+}
+
+.btn-row {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.btn {
+  padding: 0.8rem 2.5rem;
+  border: 1px solid rgba(140, 120, 100, 0.4);
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-radius: 30px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  color: #4a4038;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  letter-spacing: 0.1em;
+}
+
+.btn:hover {
+  background: rgba(255, 255, 255, 0.8);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(80, 60, 40, 0.1);
+}
+
+.btn-primary {
+  background: rgba(120, 90, 60, 0.12);
+  border-color: rgba(120, 90, 60, 0.3);
+}
+
+.btn-primary:hover {
+  background: rgba(120, 90, 60, 0.2);
+}
+
+#result {
+  display: none;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+#result.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.result-card {
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 16px;
+  padding: 2.5rem 2rem;
+  box-shadow: 0 12px 40px rgba(80, 60, 40, 0.1);
+  text-align: center;
+  position: relative;
+}
+
+.poem {
+  font-size: 1.1rem;
+  line-height: 2.2;
+  white-space: pre-line;
+  color: #3a3028;
+  letter-spacing: 0.05em;
+}
+
+.mute-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(180, 160, 140, 0.3);
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.1rem;
+  transition: all 0.25s ease;
+}
+
+.mute-btn:hover {
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.divider {
+  width: 60px;
+  height: 1px;
+  background: rgba(140, 120, 100, 0.3);
+  margin: 1.5rem auto;
+}
+
+@media (max-width: 600px) {
+  body { padding: 1rem 0.6rem; }
+  h1 { font-size: 1.4rem; }
+  .card { padding: 1.5rem 1.2rem; }
+  .options { flex-direction: column; }
+  .options label { width: 100%; }
+  .btn { padding: 0.7rem 1.8rem; font-size: 0.9rem; }
+  .result-card { padding: 2rem 1.5rem; }
+}
+</style>
 </head>
 <body>
-    <div class="container">
-        <h1>
-            感官测绘
-            <span>极简版</span>
-        </h1>
-        <div class="subtitle">五道选择题 · 三句即兴副歌 · 一份诗意标签</div>
+<div class="container">
+  <h1>感官测绘 · 存在痕迹生成器</h1>
+  <p class="subtitle">五个问题，勾勒你的存在方式</p>
 
-        <form id="surveyForm">
-            <!-- 第1题 -->
-            <div class="question-block">
-                <div class="q-title"><span class="q-num">1</span> 你手机相册的书名：</div>
-                <div class="options" data-question="1">
-                    <div class="option-item"><input type="radio" name="q1" value="A" id="q1a"><label for="q1a">A. 暂停的瞬间</label></div>
-                    <div class="option-item"><input type="radio" name="q1" value="B" id="q1b"><label for="q1b">B. 散装生活</label></div>
-                    <div class="option-item"><input type="radio" name="q1" value="C" id="q1c"><label for="q1c">C. 被凝视的日常</label></div>
-                    <div class="option-item"><input type="radio" name="q1" value="D" id="q1d"><label for="q1d">D. 备忘录</label></div>
-                </div>
-                <div class="refrain">🎵 副歌：它的气味是？ <input type="text" id="scent" placeholder="旧书的霉味 / 阳光下的灰尘..."></div>
-            </div>
-
-            <!-- 第2题 -->
-            <div class="question-block">
-                <div class="q-title"><span class="q-num">2</span> 你倾诉的线通向：</div>
-                <div class="options" data-question="2">
-                    <div class="option-item"><input type="radio" name="q2" value="A" id="q2a"><label for="q2a">A. 信号塔</label></div>
-                    <div class="option-item"><input type="radio" name="q2" value="B" id="q2b"><label for="q2b">B. 私人电台</label></div>
-                    <div class="option-item"><input type="radio" name="q2" value="C" id="q2c"><label for="q2c">C. 固定电话</label></div>
-                    <div class="option-item"><input type="radio" name="q2" value="D" id="q2d"><label for="q2d">D. 黑洞</label></div>
-                </div>
-                <div class="refrain">🎵 副歌：那头是什么天气？ <input type="text" id="weather" placeholder="下雨的午夜 / 干燥的风..."></div>
-            </div>
-
-            <!-- 第3题 -->
-            <div class="question-block">
-                <div class="q-title"><span class="q-num">3</span> 你生活的触感：</div>
-                <div class="options" data-question="3">
-                    <div class="option-item"><input type="radio" name="q3" value="A" id="q3a"><label for="q3a">A. 雾</label></div>
-                    <div class="option-item"><input type="radio" name="q3" value="B" id="q3b"><label for="q3b">B. 拼贴画</label></div>
-                    <div class="option-item"><input type="radio" name="q3" value="C" id="q3c"><label for="q3c">C. 砂纸</label></div>
-                    <div class="option-item"><input type="radio" name="q3" value="D" id="q3d"><label for="q3d">D. 积木</label></div>
-                </div>
-                <div class="refrain">🎵 副歌：它的BPM是？ <input type="text" id="bpm" placeholder="40 / 80 / 120..."></div>
-            </div>
-
-            <!-- 第4题 -->
-            <div class="question-block">
-                <div class="q-title"><span class="q-num">4</span> 你的移动方式：</div>
-                <div class="options" data-question="4">
-                    <div class="option-item"><input type="radio" name="q4" value="A" id="q4a"><label for="q4a">A. 漂浮</label></div>
-                    <div class="option-item"><input type="radio" name="q4" value="B" id="q4b"><label for="q4b">B. 闲逛</label></div>
-                    <div class="option-item"><input type="radio" name="q4" value="C" id="q4c"><label for="q4c">C. 骑行</label></div>
-                    <div class="option-item"><input type="radio" name="q4" value="D" id="q4d"><label for="q4d">D. 扎根</label></div>
-                </div>
-            </div>
-
-            <!-- 第5题 -->
-            <div class="question-block">
-                <div class="q-title"><span class="q-num">5</span> 你留下的痕迹，透明度是：</div>
-                <div class="options" data-question="5">
-                    <div class="option-item"><input type="radio" name="q5" value="A" id="q5a"><label for="q5a">A. 几乎隐形</label></div>
-                    <div class="option-item"><input type="radio" name="q5" value="B" id="q5b"><label for="q5b">B. 淡淡水印</label></div>
-                    <div class="option-item"><input type="radio" name="q5" value="C" id="q5c"><label for="q5c">C. 铅笔素描</label></div>
-                    <div class="option-item"><input type="radio" name="q5" value="D" id="q5d"><label for="q5d">D. 浓厚油画</label></div>
-                </div>
-            </div>
-
-            <div id="warningMsg" class="warning">请完成所有选择题，再生成你的诗意标签。</div>
-
-            <button type="button" class="generate-btn" id="generateBtn">✨ 生成我的标签</button>
-        </form>
-
-        <div id="resultBox" class="result-area">
-            <div class="poem-line" id="poemContent"></div>
-            <div class="extra-line" id="extraContent"></div>
-            <span class="reset-link" id="resetLink">⟳ 重新测绘</span>
-            <span class="audio-control" id="audioControl" title="静音/播放">🔊</span>
-            <span class="audio-hint">环境音随节奏变化</span>
-        </div>
+  <form id="surveyForm">
+    <!-- Q1 -->
+    <div class="card">
+      <p class="question-label">1. 你手机相册的书名：</p>
+      <div class="options">
+        <label><input type="radio" name="q1" value="A"><span>暂停的瞬间</span></label>
+        <label><input type="radio" name="q1" value="B"><span>散装生活</span></label>
+        <label><input type="radio" name="q1" value="C"><span>被凝视的日常</span></label>
+        <label><input type="radio" name="q1" value="D"><span>备忘录</span></label>
+      </div>
+      <div class="refrain">
+        <span class="refrain-label">它的气味是？</span>
+        <input type="text" id="scent" placeholder="比如：旧书页的霉味">
+      </div>
     </div>
 
-    <audio id="tempoAudio" loop preload="none"></audio>
+    <!-- Q2 -->
+    <div class="card">
+      <p class="question-label">2. 你倾诉的线通向：</p>
+      <div class="options">
+        <label><input type="radio" name="q2" value="A"><span>信号塔</span></label>
+        <label><input type="radio" name="q2" value="B"><span>私人电台</span></label>
+        <label><input type="radio" name="q2" value="C"><span>固定电话</span></label>
+        <label><input type="radio" name="q2" value="D"><span>黑洞</span></label>
+      </div>
+      <div class="refrain">
+        <span class="refrain-label">那头是什么天气？</span>
+        <input type="text" id="weather" placeholder="比如：总是下雨的午夜">
+      </div>
+    </div>
 
-    <script>
-        (function() {
-            // --- 词库 ---
-            const lexicon = {
-                1: {
-                    A: { subject: "一个收藏家", state: "暂停的", object: "截图" },
-                    B: { subject: "一个旅人", state: "散装的", object: "碎片" },
-                    C: { subject: "一个凝视者", state: "被凝视的", object: "日常" },
-                    D: { subject: "一个书记员", state: "未命名的", object: "备忘录" }
-                },
-                2: {
-                    A: { subject: "一座孤岛", state: "用信号搭建的", object: "未发送的消息" },
-                    B: { subject: "一个电台", state: "调频中的", object: "私人频率" },
-                    C: { subject: "一间老屋", state: "根深蒂固的", object: "固定电话" },
-                    D: { subject: "一个黑洞", state: "自我消化的", object: "没有回音的墙" }
-                },
-                3: {
-                    A: { subject: "一片雾", state: "伸手不见的", object: "水汽" },
-                    B: { subject: "一幅拼贴画", state: "胶水未干的", object: "碎片" },
-                    C: { subject: "一张砂纸", state: "持续摩擦的", object: "划痕" },
-                    D: { subject: "一组积木", state: "严丝合缝的", object: "结构" }
-                },
-                4: {
-                    A: { subject: "一张充气床", state: "随波逐流的", object: "水纹" },
-                    B: { subject: "一个徒步者", state: "无导航的", object: "脚印" },
-                    C: { subject: "一个骑行手", state: "知道方向的", object: "车辙" },
-                    D: { subject: "一棵树", state: "安静扩展的", object: "年轮" }
-                },
-                5: {
-                    A: { subject: "一扇玻璃", state: "快隐形的", object: "透明" },
-                    B: { subject: "一层水印", state: "淡淡的", object: "痕迹" },
-                    C: { subject: "一幅素描", state: "铅笔勾勒的", object: "轮廓" },
-                    D: { subject: "一幅油画", state: "层层覆盖的", object: "厚重" }
-                }
-            };
+    <!-- Q3 -->
+    <div class="card">
+      <p class="question-label">3. 你生活的触感：</p>
+      <div class="options">
+        <label><input type="radio" name="q3" value="A"><span>雾</span></label>
+        <label><input type="radio" name="q3" value="B"><span>拼贴画</span></label>
+        <label><input type="radio" name="q3" value="C"><span>砂纸</span></label>
+        <label><input type="radio" name="q3" value="D"><span>积木</span></label>
+      </div>
+      <div class="refrain">
+        <span class="refrain-label">它的BPM是？</span>
+        <input type="text" id="bpm" placeholder="比如：72 或 很慢">
+      </div>
+    </div>
 
-            // 默认占位词库（当用户未输入副歌时随机抽取）
-            const defaultScent = ["旧书页的霉味", "阳光晒过的棉布", "雨后泥土的腥气", "冷掉的咖啡渍", "墨水的铁锈味", "森林深处的潮湿"];
-            const defaultWeather = ["总是下雨的午夜", "干燥而空旷的风", "浓雾弥漫的清晨", "暴风雪前的寂静", "晴朗但很冷的午后", "潮湿闷热的黄昏"];
-            const defaultBpmWords = {
-                slow: ["慢板的", "沉缓的", "静默的"],
-                mid: ["行进的", "流动的", "踱步的"],
-                fast: ["狂奔的", "急促的", "飞旋的"]
-            };
+    <!-- Q4 -->
+    <div class="card">
+      <p class="question-label">4. 你的移动方式：</p>
+      <div class="options">
+        <label><input type="radio" name="q4" value="A"><span>漂浮</span></label>
+        <label><input type="radio" name="q4" value="B"><span>闲逛</span></label>
+        <label><input type="radio" name="q4" value="C"><span>骑行</span></label>
+        <label><input type="radio" name="q4" value="D"><span>扎根</span></label>
+      </div>
+    </div>
 
-            // 音频状态
-            let isMuted = false;
+    <!-- Q5 -->
+    <div class="card">
+      <p class="question-label">5. 你留下的痕迹，透明度是：</p>
+      <div class="options">
+        <label><input type="radio" name="q5" value="A"><span>几乎隐形</span></label>
+        <label><input type="radio" name="q5" value="B"><span>淡淡水印</span></label>
+        <label><input type="radio" name="q5" value="C"><span>铅笔素描</span></label>
+        <label><input type="radio" name="q5" value="D"><span>浓厚油画</span></label>
+      </div>
+    </div>
 
-            // 辅助函数：随机取数组元素
-            function randomPick(arr) {
-                return arr[Math.floor(Math.random() * arr.length)];
-            }
+    <div class="btn-row">
+      <button type="button" class="btn btn-primary" onclick="generate()">生成痕迹</button>
+      <button type="button" class="btn" onclick="resetAll()">重新开始</button>
+    </div>
+  </form>
 
-            // 获取所有选择题的答案
-            function getAnswers() {
-                const answers = {};
-                for (let i = 1; i <= 5; i++) {
-                    const selected = document.querySelector(`input[name="q${i}"]:checked`);
-                    if (!selected) return null;
-                    answers[i] = selected.value;
-                }
-                return answers;
-            }
+  <div id="result">
+    <div class="divider"></div>
+    <div class="result-card">
+      <button class="mute-btn" id="muteBtn" onclick="toggleMute()" title="静音/取消静音">🔊</button>
+      <div class="poem" id="poemOutput"></div>
+    </div>
+  </div>
+</div>
 
-            // 解析BPM节奏词 + 音频文件
-            function getTempoInfo(bpmInput) {
-                if (!bpmInput || bpmInput.trim() === '') {
-                    const types = ['slow', 'mid', 'fast'];
-                    const type = randomPick(types);
-                    const allTempos = [...defaultBpmWords.slow, ...defaultBpmWords.mid, ...defaultBpmWords.fast];
-                    return { word: randomPick(allTempos), music: 'music/' + type + '.mp3' };
-                }
-                const bpmNum = parseInt(bpmInput, 10);
-                if (isNaN(bpmNum)) {
-                    const types = ['slow', 'mid', 'fast'];
-                    const type = randomPick(types);
-                    return { word: bpmInput.trim(), music: 'music/' + type + '.mp3' };
-                }
-                if (bpmNum <= 60) return { word: randomPick(defaultBpmWords.slow), music: 'music/slow.mp3' };
-                if (bpmNum <= 100) return { word: randomPick(defaultBpmWords.mid), music: 'music/mid.mp3' };
-                return { word: randomPick(defaultBpmWords.fast), music: 'music/fast.mp3' };
-            }
+<audio id="tempoAudio" loop preload="none"></audio>
 
-            // 生成诗意标签
-            function generatePoem(answers, scentInput, weatherInput, bpmInput) {
-                const subjectPool = [];
-                const statePool = [];
-                const objectPool = [];
+<script>
+const lexicon = {
+  1: { A:{subject:"一个收藏家",state:"暂停的",object:"截图"}, B:{subject:"一个旅人",state:"散装的",object:"碎片"}, C:{subject:"一个凝视者",state:"被凝视的",object:"日常"}, D:{subject:"一个书记员",state:"未命名的",object:"备忘录"} },
+  2: { A:{subject:"一座孤岛",state:"用信号搭建的",object:"未发送的消息"}, B:{subject:"一个电台",state:"调频中的",object:"私人频率"}, C:{subject:"一间老屋",state:"根深蒂固的",object:"固定电话"}, D:{subject:"一个黑洞",state:"自我消化的",object:"没有回音的墙"} },
+  3: { A:{subject:"一片雾",state:"伸手不见的",object:"水汽"}, B:{subject:"一幅拼贴画",state:"胶水未干的",object:"碎片"}, C:{subject:"一张砂纸",state:"持续摩擦的",object:"划痕"}, D:{subject:"一组积木",state:"严丝合缝的",object:"结构"} },
+  4: { A:{subject:"一张充气床",state:"随波逐流的",object:"水纹"}, B:{subject:"一个徒步者",state:"无导航的",object:"脚印"}, C:{subject:"一个骑行手",state:"知道方向的",object:"车辙"}, D:{subject:"一棵树",state:"安静扩展的",object:"年轮"} },
+  5: { A:{subject:"一扇玻璃",state:"快隐形的",object:"透明"}, B:{subject:"一层水印",state:"淡淡的",object:"痕迹"}, C:{subject:"一幅素描",state:"铅笔勾勒的",object:"轮廓"}, D:{subject:"一幅油画",state:"层层覆盖的",object:"厚重"} }
+};
 
-                for (let i = 1; i <= 5; i++) {
-                    const entry = lexicon[i][answers[i]];
-                    subjectPool.push(entry.subject);
-                    statePool.push(entry.state);
-                    objectPool.push(entry.object);
-                }
+const defaultScent = ["旧书页的霉味","阳光晒过的棉布","雨后泥土的腥气","冷掉的咖啡渍","墨水的铁锈味","森林深处的潮湿"];
+const defaultWeather = ["总是下雨的午夜","干燥而空旷的风","浓雾弥漫的清晨","暴风雪前的寂静","晴朗但很冷的午后","潮湿闷热的黄昏"];
+const defaultBpmWords = { slow:["慢板的","沉缓的","静默的"], mid:["行进的","流动的","踱步的"], fast:["狂奔的","急促的","飞旋的"] };
 
-                const chosenSubject = randomPick(subjectPool);
-                const chosenState = randomPick(statePool);
-                const chosenObject = randomPick(objectPool);
+const extraLines = [
+  "你在场，但不留名。",
+  "像一封寄给自己的信。",
+  "存在本身就是一种回答。",
+  "没有人知道你走过这里。",
+  "你的沉默也是一种语言。",
+  "风吹过的时候，你就在那里。",
+  "不必解释，痕迹自会说话。",
+  "你是自己最安静的观众。"
+];
 
-                // 处理气味
-                let finalScent = scentInput.trim();
-                if (!finalScent) {
-                    finalScent = randomPick(defaultScent);
-                }
-                // 处理天气
-                let finalWeather = weatherInput.trim();
-                if (!finalWeather) {
-                    finalWeather = randomPick(defaultWeather);
-                }
-                // 处理节奏词 + 音频
-                const { word: tempoWord, music: musicFile } = getTempoInfo(bpmInput);
+function pick(arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
 
-                // 构建诗句
-                const poemHtml = `
-                    <span class="tempo">${tempoWord}</span>
-                    你是${chosenSubject}，<br>
-                    在${finalWeather}里，<br>
-                    用${finalScent}的<br>
-                    ${chosenState}${chosenObject}。
-                `;
+function getAnswers() {
+  const answers = {};
+  for (let i = 1; i <= 5; i++) {
+    const checked = document.querySelector(`input[name="q${i}"]:checked`);
+    if (!checked) return null;
+    answers[i] = checked.value;
+  }
+  return answers;
+}
 
-                // 附加句：从物件引申
-                const extraMessages = [
-                    `那些${chosenObject}，是你与这个世界交换的暗号。`,
-                    `你留下的${chosenObject}，比语言更诚实。`,
-                    `在${finalWeather}的日子里，${chosenObject}默默承载着你。`,
-                    `或许这就是存在——${chosenState}${chosenObject}。`
-                ];
-                const extra = randomPick(extraMessages);
+function parseBpm(input) {
+  const trimmed = input.trim();
+  if (!trimmed) {
+    const categories = ['slow', 'mid', 'fast'];
+    const cat = pick(categories);
+    return { category: cat, tempoWord: pick(defaultBpmWords[cat]) };
+  }
+  const num = parseInt(trimmed, 10);
+  if (!isNaN(num)) {
+    if (num <= 60) return { category: 'slow', tempoWord: pick(defaultBpmWords.slow) };
+    if (num <= 100) return { category: 'mid', tempoWord: pick(defaultBpmWords.mid) };
+    return { category: 'fast', tempoWord: pick(defaultBpmWords.fast) };
+  }
+  // Non-numeric: random category, use input as tempo word
+  const categories = ['slow', 'mid', 'fast'];
+  const cat = pick(categories);
+  return { category: cat, tempoWord: trimmed + "的" };
+}
 
-                return { poemHtml, extra, musicFile };
-            }
+function generate() {
+  const answers = getAnswers();
+  if (!answers) {
+    alert("请先完成所有选择题～");
+    return;
+  }
 
-            // 显示结果
-            function showResult(poemHtml, extra, musicFile) {
-                const resultBox = document.getElementById('resultBox');
-                const poemContent = document.getElementById('poemContent');
-                const extraContent = document.getElementById('extraContent');
-                poemContent.innerHTML = poemHtml;
-                extraContent.textContent = extra;
+  // Gather refrain inputs
+  const scentInput = document.getElementById('scent').value.trim();
+  const weatherInput = document.getElementById('weather').value.trim();
+  const bpmInput = document.getElementById('bpm').value;
 
-                // 两步显示：先display:block，再触发transition
-                resultBox.style.display = 'block';
-                resultBox.offsetHeight; // force reflow
-                resultBox.classList.add('show');
+  const scent = scentInput || pick(defaultScent);
+  const weather = weatherInput || pick(defaultWeather);
+  const { category, tempoWord } = parseBpm(bpmInput);
 
-                // 播放音频
-                const tempoAudio = document.getElementById('tempoAudio');
-                if (tempoAudio && musicFile) {
-                    tempoAudio.src = musicFile;
-                    tempoAudio.load();
-                    tempoAudio.play().catch(function() {});
-                    isMuted = false;
-                    document.getElementById('audioControl').textContent = '🔊';
-                }
+  // Pick lexicon entries
+  const picked = [];
+  for (let i = 1; i <= 5; i++) {
+    picked.push(lexicon[i][answers[i]]);
+  }
 
-                // 滚动到结果区域
-                resultBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            }
+  // Choose main entry from a random question
+  const main = pick(picked);
 
-            // 隐藏结果
-            function hideResult() {
-                const resultBox = document.getElementById('resultBox');
-                resultBox.classList.remove('show');
-                // 等transition完再隐藏
-                setTimeout(function() {
-                    if (!resultBox.classList.contains('show')) {
-                        resultBox.style.display = 'none';
-                    }
-                }, 400);
-                document.getElementById('poemContent').innerHTML = '';
-                document.getElementById('extraContent').textContent = '';
-            }
+  // Build poem
+  const poem = `${tempoWord}
+你是${main.subject}，
+在${weather}里，
+用${scent}的
+${main.state}${main.object}。
 
-            // 重置表单
-            function resetForm() {
-                document.querySelectorAll('input[type="radio"]').forEach(function(radio) { radio.checked = false; });
-                document.getElementById('scent').value = '';
-                document.getElementById('weather').value = '';
-                document.getElementById('bpm').value = '';
-                // 停止音频
-                var audio = document.getElementById('tempoAudio');
-                audio.pause();
-                audio.currentTime = 0;
-                hideResult();
-                document.getElementById('warningMsg').style.display = 'none';
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
+${pick(extraLines)}`;
 
-            // 主生成按钮事件
-            document.getElementById('generateBtn').addEventListener('click', function() {
-                const answers = getAnswers();
-                if (!answers) {
-                    document.getElementById('warningMsg').style.display = 'block';
-                    return;
-                }
-                document.getElementById('warningMsg').style.display = 'none';
+  // Show result with animation fix
+  const resultEl = document.getElementById('result');
+  const poemEl = document.getElementById('poemOutput');
+  poemEl.textContent = poem;
 
-                const scent = document.getElementById('scent').value;
-                const weather = document.getElementById('weather').value;
-                const bpm = document.getElementById('bpm').value;
+  resultEl.style.display = 'block';
+  resultEl.offsetHeight; // force reflow
+  resultEl.classList.add('show');
 
-                const { poemHtml, extra, musicFile } = generatePoem(answers, scent, weather, bpm);
-                showResult(poemHtml, extra, musicFile);
-            });
+  // Scroll to result
+  resultEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-            // 重置按钮
-            document.getElementById('resetLink').addEventListener('click', resetForm);
+  // Play audio
+  playAudio(category);
+}
 
-            // 音频控制按钮
-            document.getElementById('audioControl').addEventListener('click', function() {
-                var audio = document.getElementById('tempoAudio');
-                if (isMuted) {
-                    audio.play().catch(function() {});
-                    document.getElementById('audioControl').textContent = '🔊';
-                } else {
-                    audio.pause();
-                    document.getElementById('audioControl').textContent = '🔇';
-                }
-                isMuted = !isMuted;
-            });
+function playAudio(category) {
+  const audio = document.getElementById('tempoAudio');
+  const src = `./music/${category}.mp3`;
+  audio.src = src;
+  audio.volume = 0.4;
+  audio.play().catch(() => {});
+  document.getElementById('muteBtn').textContent = '🔊';
+}
 
-            // 点击选项时隐藏警告
-            document.querySelectorAll('input[type="radio"]').forEach(function(radio) {
-                radio.addEventListener('change', function() {
-                    document.getElementById('warningMsg').style.display = 'none';
-                });
-            });
+function toggleMute() {
+  const audio = document.getElementById('tempoAudio');
+  const btn = document.getElementById('muteBtn');
+  if (audio.muted) {
+    audio.muted = false;
+    btn.textContent = '🔊';
+  } else {
+    audio.muted = true;
+    btn.textContent = '🔇';
+  }
+}
 
-            // 初始化：确保结果区隐藏
-            document.getElementById('resultBox').style.display = 'none';
-        })();
-    </script>
+function resetAll() {
+  // Stop audio
+  const audio = document.getElementById('tempoAudio');
+  audio.pause();
+  audio.currentTime = 0;
+  audio.src = '';
+
+  // Hide result
+  const resultEl = document.getElementById('result');
+  resultEl.classList.remove('show');
+  setTimeout(() => { resultEl.style.display = 'none'; }, 600);
+
+  // Reset form
+  document.getElementById('surveyForm').reset();
+
+  // Scroll to top
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
 </body>
 </html>
